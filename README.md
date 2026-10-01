@@ -22,12 +22,21 @@ Abre <http://localhost:3000>
 |---|---|---|
 | `PORT` | `3000` | Puerto del servidor |
 | `HOST` | `0.0.0.0` | Interfaz de escucha (visible en la red local) |
+| `PUBLIC_URL` | _(vacía)_ | URL pública base de los enlaces de invitación. Si no está, se lee `public/public-url.txt` (lo escribe `npm run share`) y, si tampoco, manda la URL con la que abre el jugador |
 
 ### Tests
 
 ```bash
-npm test        # simula partidas completas de los 4 modos por WebSocket
+npm test
 ```
+
+1. `test/ids.js` — coherencia HTML/CSS/JS (que todos los IDs que usa el JS existan).
+2. `test/sim.js` — simula por WebSocket partidas completas de los 4 modos,
+   errores de reglas, reconexión y el enlace `?sala=`.
+3. `test/dom.js` — **el cliente real** (`public/client.js`) corriendo en jsdom:
+   4 ventanas juegan dos partidas enteras clicando de verdad (crear, unirse por
+   enlace, colocar, disparar, revancha y volver al lobby) y falla si el cliente
+   lanza algún error. Necesita `npm install` (usa jsdom) y el servidor en marcha.
 
 ---
 

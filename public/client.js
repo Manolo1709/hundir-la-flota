@@ -464,9 +464,10 @@ function sendRooms() {
 
 /** Enlace público de la sala: `https://servidor/?sala=ABC12` */
 function inviteLink() {
-  const base = String(window.__PUBLIC_URL__ || '')
-    .trim()
-    .replace(/\/+$/, '');
+  const base =
+    String(window.__PUBLIC_URL__ || '')
+      .trim()
+      .replace(/\/+$/, '') || location.origin; // sin PUBLIC_URL: la propia URL actual
   return `${base}/?sala=${room ? room.code : ''}`;
 }
 
@@ -832,9 +833,7 @@ function boardPanel(p, mine) {
   for (let y = 0; y < BOARD_SIZE; y++) {
     for (let x = 0; x < BOARD_SIZE; x++) {
       const cell = grid.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
-      const classes = battleCellClass(x, y, p, mine)
-        .split(' ')
-        .filter(Boolean);
+      const classes = battleCellClass(x, y, p, mine);
       classes.forEach((c) => cell.classList.add(c));
       cell.title = `${coordName(x, y)}`;
       if (targeting && !b.shots.has(cellKey(x, y)) && !pendingFire) {

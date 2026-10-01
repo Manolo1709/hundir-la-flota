@@ -9,10 +9,13 @@
   "scripts": {
     "start": "node server/index.js",
     "share": "node scripts/share.js",
-    "test": "node test/ids.js && node test/sim.js"
+    "test": "node test/ids.js && node test/sim.js && node test/dom.js"
   },
   "license": "MIT",
   "dependencies": {
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.1"
   }
 }
