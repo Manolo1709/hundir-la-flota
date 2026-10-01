@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node server/index.js",
     "share": "node scripts/share.js",
-    "test": "node test/ids.js && node test/sim.js && node test/dom.js"
+    "test": "node test/ids.js && node test/sim.js && node test/dom.js",
+    "verify": "node scripts/verify.js"
   },
   "license": "MIT",
   "dependencies": {

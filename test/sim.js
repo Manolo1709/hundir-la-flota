@@ -9,6 +9,8 @@ const WebSocket = require('ws');
 const { generateFleet } = require('../server/game');
 
 const URL = process.env.URL || 'ws://localhost:3000';
+// URL HTTP equivalente para comprobar /config.js (ws://→http://, wss://→https://)
+const HTTP_URL = process.env.HTTP || URL.replace(/^ws/, 'http').replace(/\/$/, '');
 let failures = 0;
 let checks = 0;
 
@@ -397,7 +399,7 @@ async function testReconnect() {
 
 async function testInviteConfig() {
   console.log('\n[6] Enlace de invitación (?sala=) y config.js');
-  const res = await fetch('http://localhost:3000/config.js');
+  const res = await fetch(`${HTTP_URL}/config.js`);
   const txt = await res.text();
   check(res.ok, 'responde GET /config.js');
   check(

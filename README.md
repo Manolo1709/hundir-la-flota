@@ -38,6 +38,16 @@ npm test
    enlace, colocar, disparar, revancha y volver al lobby) y falla si el cliente
    lanza algún error. Necesita `npm install` (usa jsdom) y el servidor en marcha.
 
+### Verificar un despliegue público
+
+```bash
+npm run verify -- https://TU-SERVIDOR.onrender.com
+```
+
+Despierta la instancia, comprueba que el código desplegado lleva los arreglos
+(`client.js`, enlace de invitación, `/health`, `/config.js`) y ejecuta **la suite
+completa contra esa URL por `wss://`**, es decir, desde fuera de tu red.
+
 ---
 
 ## 🕹️ Cómo se juega
