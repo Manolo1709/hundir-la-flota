@@ -2,7 +2,7 @@
 # https://render.com/deploy  →  "Connect a repository" con este repo
 services:
   - type: web
-    name: hundir-la-flota
+    name: hundir-la-flota-online
     runtime: node
     plan: free
     buildCommand: npm install
@@ -12,3 +12,6 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "20"
+      # URL pública: así el botón "Invitar jugadores" genera enlaces absolutos
+      - key: PUBLIC_URL
+        value: https://hundir-la-flota-online.onrender.com
