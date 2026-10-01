@@ -1,0 +1,5 @@
+node_modules/
+cloudflared.exe
+public/public-url.txt
+*.log
+.env

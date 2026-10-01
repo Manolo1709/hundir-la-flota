@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>⚓ Hundir la Flota Online</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">⚓ Hundir la Flota <span class="brand-sub">online</span></div>
+    <div class="topbar-right">
+      <span id="roomBadge" class="room-badge hidden">Sala <b id="roomCodeText">-----</b></span>
+      <span id="connStatus" class="conn conn-wait">conectando…</span>
+    </div>
+  </header>
+
+  <main id="app">
+    <!-- ======================= INICIO ======================= -->
+    <section id="screen-home" class="screen">
+      <div class="card home-card">
+        <h1>⚓ Hundir la Flota</h1>
+        <p class="subtitle">Partidas online con amigos: 1v1, 1v1v1, 1v1v1v1 o 2v2.</p>
+
+        <label class="field">
+          <span>Tu nombre</span>
+          <input id="inputName" maxlength="16" placeholder="Jugador" autocomplete="off">
+        </label>
+
+        <h3 class="section-title">Elige el modo</h3>
+        <div class="modes" id="modeGrid">
+          <button class="mode-card selected" data-mode="1v1">
+            <b>1 vs 1</b><span>2 jugadores</span>
+          </button>
+          <button class="mode-card" data-mode="1v1v1">
+            <b>1 vs 1 vs 1</b><span>3 jugadores</span>
+          </button>
+          <button class="mode-card" data-mode="1v1v1v1">
+            <b>1 vs 1 vs 1 vs 1</b><span>4 jugadores</span>
+          </button>
+          <button class="mode-card" data-mode="2v2">
+            <b>2 vs 2</b><span>4 jugadores · equipos</span>
+          </button>
+        </div>
+
+        <div class="row center">
+          <button id="btnCreate" class="btn primary big">➕ Crear sala</button>
+        </div>
+
+        <div class="divider"><span>o únete a una sala</span></div>
+
+        <div class="row">
+          <input id="inputCode" maxlength="6" placeholder="CÓDIGO" class="code-input" autocomplete="off">
+          <button id="btnJoin" class="btn">➡ Unirse</button>
+        </div>
+
+        <div id="roomListWrap" class="room-list-wrap hidden">
+          <h3 class="section-title">Salas abiertas</h3>
+          <ul id="roomList" class="room-list"></ul>
+        </div>
+
+        <details class="rules">
+          <summary>📜 Cómo se juega</summary>
+          <ul>
+            <li>Cada jugador tiene su tablero de <b>10×10</b> con 10 barcos: 1 de 4 casillas, 2 de 3, 3 de 2 y 4 de 1.</li>
+            <li>Los barcos <b>no pueden tocarse</b>, ni siquiera en diagonal.</li>
+            <li>Por turnos disparas a una casilla de un rival: <b>💦 agua</b>, <b>🔥 tocado</b> o <b>💥 hundido</b>.</li>
+            <li>En <b>2v2</b> solo puedes disparar al equipo contrario y los compañeros alternan turno.</li>
+            <li>Gana el último equipo (o jugador) con barcos a flote.</li>
+          </ul>
+        </details>
+      </div>
+    </section>
+
+    <!-- ======================= SALA / LOBBY ======================= -->
+    <section id="screen-lobby" class="screen hidden">
+      <div class="card lobby-card">
+        <div class="room-code">
+          <span class="room-code-label">Código de sala</span>
+          <div class="code-big" id="lobbyCode">-----</div>
+          <button id="btnCopy" class="btn small">📋 Copiar código</button>
+          <button id="btnInvite" class="btn primary small">👥 Invitar jugadores</button>
+        </div>
+        <p class="hint">Comparte el código, o envía el enlace de invitación a quien quieras.</p>
+
+        <div id="inviteBox" class="invite-box hidden">
+          <label>Enlace de invitación</label>
+          <div class="row">
+            <input id="inviteLink" readonly>
+            <button id="btnCopyInvite" class="btn small">📋 Copiar enlace</button>
+          </div>
+          <p class="hint">Cualquiera con este enlace entra directamente a la sala, desde cualquier parte del mundo.</p>
+        </div>
+
+        <h3 class="section-title">Modo de juego</h3>
+        <div class="modes compact" id="lobbyModes">
+          <button class="mode-card" data-mode="1v1"><b>1 vs 1</b></button>
+          <button class="mode-card" data-mode="1v1v1"><b>1 vs 1 vs 1</b></button>
+          <button class="mode-card" data-mode="1v1v1v1"><b>1 vs 1 vs 1 vs 1</b></button>
+          <button class="mode-card" data-mode="2v2"><b>2 vs 2</b></button>
+        </div>
+
+        <div id="teamsBox"></div>
+        <ul id="lobbyPlayers" class="player-list"></ul>
+
+        <div class="row center">
+          <button id="btnStart" class="btn primary big">▶ Empezar</button>
+          <button id="btnLeave" class="btn danger">Salir</button>
+        </div>
+        <p id="lobbyHint" class="hint center"></p>
+      </div>
+    </section>
+
+    <!-- ======================= COLOCACIÓN ======================= -->
+    <section id="screen-placing" class="screen hidden">
+      <div class="placing-layout">
+        <div class="board-panel mine">
+          <div class="board-head">
+            <h2>Tu flota</h2>
+            <span id="placingHint" class="hint">Coloca tus barcos en el tablero</span>
+          </div>
+          <div id="myBoardPlace" class="board-host"></div>
+        </div>
+
+        <aside class="side">
+          <div class="card">
+            <h3>Barcos <span class="muted">(pulsa uno para elegirlo)</span></h3>
+            <div id="tray" class="tray"></div>
+            <div class="row">
+              <button id="btnRotate" class="btn">⟳ Girar <kbd>R</kbd></button>
+              <button id="btnAuto" class="btn">🎲 Automático</button>
+            </div>
+            <div class="row">
+              <button id="btnReady" class="btn primary big">✅ Listo</button>
+              <button id="btnUnready" class="btn ghost hidden">✏️ Cambiar flota</button>
+            </div>
+            <p class="hint">Los barcos no pueden tocarse, ni siquiera en diagonal.</p>
+          </div>
+
+          <div class="card">
+            <h3>Jugadores</h3>
+            <ul id="placingPlayers" class="player-list"></ul>
+            <p id="placingWait" class="hint"></p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ======================= BATALLA ======================= -->
+    <section id="screen-battle" class="screen hidden">
+      <div id="battleBanner" class="banner"></div>
+      <div class="battle-layout">
+        <div id="boards" class="boards"></div>
+        <aside class="side">
+          <div class="card">
+            <h3>Flotas</h3>
+            <ul id="battlePlayers" class="player-list"></ul>
+          </div>
+          <div class="card log-card">
+            <h3>Registro</h3>
+            <div id="log" class="log"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= FINAL ======================= -->
+  <div id="overlay" class="overlay hidden">
+    <div class="card overlay-card">
+      <h2 id="overTitle">Fin de la partida</h2>
+      <p id="overText"></p>
+      <div id="overBoard" class="over-board"></div>
+      <div class="row center wrap">
+        <button id="btnRematch" class="btn primary big">🔄 Revancha</button>
+        <button id="btnToLobby" class="btn">🏠 Volver a la sala</button>
+        <button id="btnExit" class="btn ghost">Salir</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/config.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
